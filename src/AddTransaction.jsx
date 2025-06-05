@@ -78,9 +78,10 @@ function AddTransaction({ onAdded }) {
         required
       /><br />
       <select value={type} onChange={(e) => setType(e.target.value)} required>
-        <option value="wpływ">Wpływ</option>
-        <option value="wydatek">Wydatek</option>
-      </select><br />
+        <option value="income">Wpływ</option>
+        <option value="expense">Wydatek</option>
+    </select>
+
       <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required>
         <option value="">-- Wybierz kategorię --</option>
         {categories.map(cat => (
