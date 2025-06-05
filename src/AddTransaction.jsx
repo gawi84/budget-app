@@ -12,17 +12,19 @@ function AddTransaction({ onAdded }) {
 
   // Ładowanie kategorii z bazy
   useEffect(() => {
-    fetchCategories();
-  }, []);
+  if (type) fetchCategories(type);
+}, [type]);
 
-  async function fetchCategories() {
-    const { data, error } = await supabase.from('categories').select('*');
-    if (error) {
-      console.error('Błąd pobierania kategorii:', error);
-    } else {
-      setCategories(data);
-    }
-  }
+async function fetchCategories(selectedType) {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('type', selectedType);
+
+  if (error) console.error('Błąd pobierania kategorii:', error);
+  else setCategories(data);
+}
+
 
   async function handleAdd(e) {
     e.preventDefault();
