@@ -5,7 +5,7 @@ function AddTransaction({ onAdded }) {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
-  const [type, setType] = useState('wydatek');
+  const [type, setType] = useState('expense');
   const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
