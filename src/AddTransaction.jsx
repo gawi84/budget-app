@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 
 function AddTransaction({ onAdded }) {
@@ -6,38 +6,53 @@ function AddTransaction({ onAdded }) {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
   const [type, setType] = useState('wydatek');
-  const [category, setCategory] = useState('jedzenie');
+  const [categoryId, setCategoryId] = useState('');
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleAdd = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  // Ładowanie kategorii z bazy
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  const { error } = await supabase.from('transactions').insert([
-    {
-      user_id: user.id, // ← najważniejsze!
-      description,
-      amount: parseFloat(amount),
-      transaction_date: date,
-      transaction_type: type,
-      category_id: category // zakładam, że zapisujesz UUID kategorii
+  async function fetchCategories() {
+    const { data, error } = await supabase.from('categories').select('*');
+    if (error) {
+      console.error('Błąd pobierania kategorii:', error);
+    } else {
+      setCategories(data);
     }
-  ]);
-
-  setLoading(false);
-  if (!error) {
-    setDescription('');
-    setAmount('');
-    setDate('');
-    if (onAdded) onAdded();
-  } else {
-    alert('Błąd dodawania: ' + error.message);
   }
-};
+
+  async function handleAdd(e) {
+    e.preventDefault();
+    setLoading(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { error } = await supabase.from('transactions').insert([
+      {
+        user_id: user.id,
+        description,
+        amount: parseFloat(amount),
+        transaction_date: date,
+        transaction_type: type,
+        category_id: categoryId, // teraz UUID
+      }
+    ]);
+
+    setLoading(false);
+    if (!error) {
+      setDescription('');
+      setAmount('');
+      setDate('');
+      setCategoryId('');
+      setType('wydatek');
+      if (onAdded) onAdded();
+    } else {
+      alert('Błąd dodawania: ' + error.message);
+    }
+  }
 
   return (
     <form onSubmit={handleAdd}>
@@ -62,19 +77,15 @@ function AddTransaction({ onAdded }) {
         onChange={(e) => setDate(e.target.value)}
         required
       /><br />
-      <select value={type} onChange={(e) => setType(e.target.value)}>
+      <select value={type} onChange={(e) => setType(e.target.value)} required>
         <option value="wpływ">Wpływ</option>
         <option value="wydatek">Wydatek</option>
       </select><br />
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        <option value="jedzenie">Jedzenie</option>
-        <option value="auto">Auto</option>
-        <option value="dom">Dom</option>
-        <option value="kosmetyki">Kosmetyki</option>
-        <option value="kot">Kot</option>
-        <option value="ubrania">Ubrania</option>
-        <option value="opłaty">Opłaty</option>
-        <option value="oszczędności">Konto oszczędnościowe</option>
+      <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required>
+        <option value="">-- Wybierz kategorię --</option>
+        {categories.map(cat => (
+          <option key={cat.id} value={cat.id}>{cat.name}</option>
+        ))}
       </select><br />
       <button type="submit" disabled={loading}>
         {loading ? 'Dodawanie...' : 'Dodaj'}
