@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import TransactionsList from './TransactionsList';
 import Login from './Login';
+import AddTransaction from './AddTransaction';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -21,6 +22,7 @@ function App() {
       {session ? (
         <>
           <button onClick={() => supabase.auth.signOut()}>Wyloguj</button>
+          <AddTransaction onAdded={() => window.location.reload()} />
           <TransactionsList />
         </>
       ) : (
