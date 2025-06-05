@@ -55,7 +55,7 @@ function AddTransaction({ onAdded }) {
   }
 
   return (
-    <form onSubmit={handleAdd}>
+    <form onSubmit={handleAdd} className="form">
       <h3>Dodaj transakcję</h3>
       <input
         type="text"
