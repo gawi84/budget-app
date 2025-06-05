@@ -10,29 +10,34 @@ function AddTransaction({ onAdded }) {
   const [loading, setLoading] = useState(false);
 
   const handleAdd = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    const { error } = await supabase.from('transactions').insert([
-      {
-        description,
-        amount: parseFloat(amount),
-        transaction_date: date,
-        transaction_type: type,
-        category,
-      }
-    ]);
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
 
-    setLoading(false);
-    if (!error) {
-      setDescription('');
-      setAmount('');
-      setDate('');
-      if (onAdded) onAdded(); // odświeżenie listy
-    } else {
-      alert('Błąd dodawania: ' + error.message);
+  const { error } = await supabase.from('transactions').insert([
+    {
+      user_id: user.id, // ← najważniejsze!
+      description,
+      amount: parseFloat(amount),
+      transaction_date: date,
+      transaction_type: type,
+      category_id: category // zakładam, że zapisujesz UUID kategorii
     }
-  };
+  ]);
+
+  setLoading(false);
+  if (!error) {
+    setDescription('');
+    setAmount('');
+    setDate('');
+    if (onAdded) onAdded();
+  } else {
+    alert('Błąd dodawania: ' + error.message);
+  }
+};
 
   return (
     <form onSubmit={handleAdd}>
