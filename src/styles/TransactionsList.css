@@ -1,0 +1,184 @@
+/* 🔹 Nagłówek filtrów - przyklejony na górze */
+.filters-sticky {
+  position: sticky;
+  top: 0;
+  background: #1e1e1e;
+  padding: 0.5em;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  align-items: center;
+  border-bottom: 1px solid #444;
+}
+
+/* 🔹 Styl inputów i selectów w filtrach */
+.filters-sticky input,
+.filters-sticky select {
+  background-color: #2c2c2c;
+  color: white;
+  border: 1px solid #555;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* 🔹 Placeholder koloru (np. w input[type=date]) */
+.filters-sticky input::placeholder {
+  color: #aaa;
+}
+
+/* 🔹 Labelki filtrów - kolumna + mniejsze fonty */
+.filters-sticky label {
+  color: white;
+  font-size: 0.9em;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔹 Przycisk "Filtruj" */
+.filters-sticky button {
+  background: #111;
+  color: white;
+  border: 1px solid white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filters-sticky button:hover {
+  background: white;
+  color: black;
+}
+
+/* 🔹 Kontener transakcji (cała zawartość sekcji transakcji) */
+.transactions-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+  width: 100%;
+}
+
+/* 🔹 Widok tabeli (desktop) */
+.transactions-table {
+  display: block;
+}
+
+.transactions-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* ustala proporcje kolumny */
+}
+
+/* 🔹 Ogólne style komórek */
+.transactions-table th,
+.transactions-table td {
+  padding: 0.75em;
+  text-align: left;
+  word-wrap: break-word;
+  vertical-align: top;
+}
+
+/* 🔹 Kolumny - konkretny układ */
+/* Checkbox */
+.transactions-table th:first-child,
+.transactions-table td:first-child {
+  width: 40px;
+}
+
+/* Data */
+.transactions-table th:nth-child(2),
+.transactions-table td:nth-child(2) {
+  width: 120px;
+}
+
+/* Opis */
+.transactions-table th:nth-child(3),
+.transactions-table td:nth-child(3) {
+  max-width: 300px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Kategoria */
+.transactions-table th:nth-child(4),
+.transactions-table td:nth-child(4) {
+  width: 150px;
+}
+
+/* Kwota */
+.transactions-table th:nth-child(5),
+.transactions-table td:nth-child(5) {
+  width: 100px;
+  text-align: right;
+}
+
+/* Użytkownik */
+.transactions-table th:nth-child(6),
+.transactions-table td:nth-child(6) {
+  width: 120px;
+}
+
+/* 🔹 Widok kart (mobile) */
+.transactions-cards {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .transactions-table {
+    display: none;
+  }
+
+  .transactions-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .transaction-card {
+    padding: 1em;
+    border-radius: 10px;
+    background-color: var(--card-bg);
+    color: var(--card-color);
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .transaction-card.income {
+    border-left-color: green;
+  }
+
+  .transaction-card.expense {
+    border-left-color: red;
+  }
+
+  .transaction-card:hover {
+    background: #ececec;
+  }
+
+  .card-line1,
+  .card-line2 {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.3em;
+    gap: 0.5em;
+    flex-wrap: wrap;
+  }
+
+  .card-line1 span,
+  .card-line2 span {
+    flex: 1 1 auto;
+    font-size: 0.9em;
+  }
+}
+/* 🔹 Delikatne tło dla co drugiego wiersza tabeli */
+.transactions-table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03); /* jasnoszare w trybie dark */
+}
+
+/* Tryb jasny — inne tło dla kontrastu */
+@media (prefers-color-scheme: light) {
+  .transactions-table tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.03); /* bardzo jasny szary */
+  }
+}

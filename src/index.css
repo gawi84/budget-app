@@ -11,7 +11,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --card-bg: #2c2c2c;
+  --card-color: #ffffff;
 }
+
+
 
 a {
   font-weight: 500;
@@ -24,11 +28,14 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
+  background-color: #242424;
+  color: rgba(255, 255, 255, 0.87);
   min-width: 320px;
   min-height: 100vh;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
+
 
 h1 {
   font-size: 3.2em;
@@ -58,14 +65,19 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
+    --card-bg: #f9f9f9;
+    --card-color: #000000;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
 }
+
 .form {
   margin: 1em 0;
   padding: 1em;
@@ -95,4 +107,16 @@ button:focus-visible {
 
 .form button:hover {
   background-color: #555;
+}
+.app-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.centered-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+  width: 100%;
 }

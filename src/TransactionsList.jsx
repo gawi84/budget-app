@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import EditTransaction from './EditTransaction';
 import { getUserName, userMap } from './helpers';
+import './styles/TransactionsList.css';
 
 function TransactionsList() {
   const [transactions, setTransactions] = useState([]);
@@ -58,36 +59,51 @@ function TransactionsList() {
   }
 
   return (
-    <div>
+    <div className="transactions-container">
       <h2>📄 Lista transakcji</h2>
 
       {/* FILTRY */}
-      <div style={{ marginBottom: '1em' }}>
-        <input type="date" value={selectedStartDate} onChange={e => setStartDate(e.target.value)} />
-        <input type="date" value={selectedEndDate} onChange={e => setEndDate(e.target.value)} />
-        <select value={selectedType} onChange={e => setSelectedType(e.target.value)}>
-          <option value="">Wszystko</option>
-          <option value="income">Wpływ</option>
-          <option value="expense">Wydatek</option>
-        </select>
-        <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
-          <option value="">Wszystkie kategorie</option>
-          {categories.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
-        </select>
-        <select value={selectedUser} onChange={e => setSelectedUser(e.target.value)}>
-          <option value="">Wszyscy użytkownicy</option>
-          {Object.entries(userMap).map(([uid, name]) => (
-            <option key={uid} value={uid}>{name}</option>
-          ))}
-        </select>
+      <div className="filters-sticky">
+        <label>
+          Data od:
+          <input type="date" value={selectedStartDate} onChange={e => setStartDate(e.target.value)} />
+        </label>
+        <label>
+          Data do:
+          <input type="date" value={selectedEndDate} onChange={e => setEndDate(e.target.value)} />
+        </label>
+        <label>
+          Typ:
+          <select value={selectedType} onChange={e => setSelectedType(e.target.value)}>
+            <option value="">Wszystko</option>
+            <option value="income">Wpływ</option>
+            <option value="expense">Wydatek</option>
+          </select>
+        </label>
+        <label>
+          Kategoria:
+          <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
+            <option value="">Wszystkie</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Użytkownik:
+          <select value={selectedUser} onChange={e => setSelectedUser(e.target.value)}>
+            <option value="">Wszyscy</option>
+            {Object.entries(userMap).map(([uid, name]) => (
+              <option key={uid} value={uid}>{name}</option>
+            ))}
+          </select>
+        </label>
         <button onClick={fetchTransactions}>Filtruj</button>
       </div>
 
-      {/* TABELA */}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      {/* TABELA – desktop */}
+      <div className="transactions-table">
+        <table>
           <thead>
             <tr>
               <th></th>
@@ -99,32 +115,61 @@ function TransactionsList() {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((t) => {
-              console.log('🧾 user_id:', t.user_id, '| getUserName:', getUserName(t.user_id));
-              return (
-                <tr
-                  key={t.id}
-                  onClick={() => setSelectedId(t.id)}
-                  style={{
-                    backgroundColor: selectedId === t.id ? '#333' : '',
-                    color: t.transaction_type === 'income' ? 'green' : 'red',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <td><input type="radio" checked={selectedId === t.id} onChange={() => setSelectedId(t.id)} /></td>
-                  <td>{t.transaction_date}</td>
-                  <td>{t.description}</td>
-                  <td>{t.categories?.name || 'brak'}</td>
-                  <td>{t.amount} zł</td>
-                  <td>
-                    <td>{getUserName(t.user_id)}</td>
-
-                  </td>
-                </tr>
-              );
-            })}
+            {transactions.map((t) => (
+              <tr
+                key={t.id}
+                onClick={() => setSelectedId(t.id)}
+                style={{
+                  backgroundColor: selectedId === t.id ? '#333' : '',
+                  color: t.transaction_type === 'income' ? 'green' : 'red',
+                  cursor: 'pointer',
+                }}
+              >
+                <td>
+                  <input
+                    type="radio"
+                    checked={selectedId === t.id}
+                    onChange={() => setSelectedId(t.id)}
+                  />
+                </td>
+                <td>{t.transaction_date}</td>
+                <td>{t.description}</td>
+                <td>{t.categories?.name || 'brak'}</td>
+                <td>{t.amount} zł</td>
+                <td>{getUserName(t.user_id)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
+      </div>
+
+      {/* KARTY – mobile */}
+      <div className="transactions-cards">
+        {transactions.map((t) => (
+          <div
+            key={t.id}
+            className={`transaction-card ${t.transaction_type}`}
+            onClick={() => setSelectedId(t.id)}
+          >
+            <div className="card-line1">
+              <span><strong>{t.transaction_type === 'income' ? '💚 Wpływ' : '❤️ Wydatek'}</strong></span>
+              <span>🏷️ {t.categories?.name || 'brak'}</span>
+              <span>💰 {t.amount} zł</span>
+            </div>
+            <div className="card-line2">
+              <span>📅 {t.transaction_date}</span>
+              <span>📝 {t.description}</span>
+              <span>👤 {getUserName(t.user_id)}</span>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <input
+                type="radio"
+                checked={selectedId === t.id}
+                onChange={() => setSelectedId(t.id)}
+              />
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* PRZYCISKI */}

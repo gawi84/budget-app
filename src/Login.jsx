@@ -20,7 +20,7 @@ function Login() {
   };
 
   return (
-    <div>
+    <div className="centered-container">
       <h2>Zaloguj się</h2>
       <form onSubmit={handleLogin}>
         <input

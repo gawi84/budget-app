@@ -23,7 +23,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="app-container">
       <nav style={{ marginBottom: '1em' }}>
         <button onClick={() => setView('add')}>Dodaj</button>
         <button onClick={() => setView('list')}>Transakcje</button>
