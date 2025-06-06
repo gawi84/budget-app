@@ -12,6 +12,11 @@ function TransactionsList() {
   const [selectedId, setSelectedId] = useState(null);
   const [editingId, setEditingId] = useState(null);
 
+  // MAPA UŻYTKOWNIKÓW (podmień na swoje UUID z Supabase)
+  const userMap = {
+    'uuid-dareka': 'Darek',
+    'uuid-agnieszki': 'Agnieszka',
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -54,10 +59,9 @@ function TransactionsList() {
   }
 
   function editTransaction() {
-  if (!selectedId) return alert('Zaznacz transakcję.');
-  setEditingId(selectedId); // to uruchamia komponent edycji
-}
-
+    if (!selectedId) return alert('Zaznacz transakcję.');
+    setEditingId(selectedId);
+  }
 
   return (
     <div>
@@ -91,8 +95,7 @@ function TransactionsList() {
               <th>Opis</th>
               <th>Kategoria</th>
               <th>Kwota</th>
-              <th>Typ</th>
-              <th>User ID</th>
+              <th>Użytkownik</th>
             </tr>
           </thead>
           <tbody>
@@ -106,13 +109,14 @@ function TransactionsList() {
                   cursor: 'pointer',
                 }}
               >
-                <td><input type="radio" checked={selectedId === t.id} onChange={() => setSelectedId(t.id)} /></td>
+                <td>
+                  <input type="radio" checked={selectedId === t.id} onChange={() => setSelectedId(t.id)} />
+                </td>
                 <td>{t.transaction_date}</td>
                 <td>{t.description}</td>
                 <td>{t.categories?.name || 'brak'}</td>
                 <td>{t.amount} zł</td>
-                <td>{t.transaction_type}</td>
-                <td>{t.user_id?.substring(0, 8) + '...'}</td>
+                <td>{userMap[t.user_id] || 'Nieznany'}</td>
               </tr>
             ))}
           </tbody>
@@ -126,21 +130,21 @@ function TransactionsList() {
           🗑️ Usuń
         </button>
       </div>
-      {editingId && (
-  <EditTransaction
-    id={editingId}
-    onClose={() => setEditingId(null)}
-    onSaved={() => {
-      fetchTransactions();
-      setEditingId(null);
-      setSelectedId(null);
-    }}
-  />
-)}
 
+      {/* OKNO EDYCJI */}
+      {editingId && (
+        <EditTransaction
+          id={editingId}
+          onClose={() => setEditingId(null)}
+          onSaved={() => {
+            fetchTransactions();
+            setEditingId(null);
+            setSelectedId(null);
+          }}
+        />
+      )}
     </div>
   );
-  
 }
 
 export default TransactionsList;
