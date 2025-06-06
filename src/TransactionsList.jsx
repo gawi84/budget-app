@@ -120,7 +120,7 @@ function TransactionsList() {
                 <td>{t.description}</td>
                 <td>{t.categories?.name || 'brak'}</td>
                 <td>{t.amount} zł</td>
-                <td>{userMap[t.user_id] || 'Nieznany'}</td>
+                <td>{t.user_id} → {userMap[t.user_id] || 'Nieznany'}</td>
               </tr>
             ))}
           </tbody>
