@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import EditTransaction from './EditTransaction';
+import { getUserName } from './helpers';
+
+// Mapa UID -> imię użytkownika
+const userMap = {
+  'd1248566-a2f7-4d93-8d38-b6d4aa40b2dc': 'Darek',
+  '7132e418-b66e-48b7-bb06-951080a4c6c0': 'Agnieszka',
+};
 
 function TransactionsList() {
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedType, setSelectedType] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedUser, setSelectedUser] = useState('');
   const [selectedStartDate, setStartDate] = useState('');
   const [selectedEndDate, setEndDate] = useState('');
   const [selectedId, setSelectedId] = useState(null);
   const [editingId, setEditingId] = useState(null);
-
-  // MAPA UŻYTKOWNIKÓW (podmień na swoje UUID z Supabase)
-  const userMap = {
-    'uuid-dareka': 'Darek',
-    'uuid-agnieszki': 'Agnieszka',
-  };
 
   useEffect(() => {
     fetchCategories();
@@ -31,14 +33,12 @@ function TransactionsList() {
   async function fetchTransactions() {
     let query = supabase
       .from('transactions')
-      .select(`
-        id, transaction_date, description, amount, transaction_type, user_id,
-        categories(name)
-      `)
+      .select(`id, transaction_date, description, amount, transaction_type, user_id, category_id, categories(name)`)
       .order('transaction_date', { ascending: false });
 
     if (selectedType) query = query.eq('transaction_type', selectedType);
     if (selectedCategory) query = query.eq('category_id', selectedCategory);
+    if (selectedUser) query = query.eq('user_id', selectedUser);
     if (selectedStartDate) query = query.gte('transaction_date', selectedStartDate);
     if (selectedEndDate) query = query.lte('transaction_date', selectedEndDate);
 
@@ -82,6 +82,12 @@ function TransactionsList() {
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
+        <select value={selectedUser} onChange={e => setSelectedUser(e.target.value)}>
+          <option value="">Wszyscy użytkownicy</option>
+          {Object.entries(userMap).map(([uid, name]) => (
+            <option key={uid} value={uid}>{name}</option>
+          ))}
+        </select>
         <button onClick={fetchTransactions}>Filtruj</button>
       </div>
 
@@ -109,9 +115,7 @@ function TransactionsList() {
                   cursor: 'pointer',
                 }}
               >
-                <td>
-                  <input type="radio" checked={selectedId === t.id} onChange={() => setSelectedId(t.id)} />
-                </td>
+                <td><input type="radio" checked={selectedId === t.id} onChange={() => setSelectedId(t.id)} /></td>
                 <td>{t.transaction_date}</td>
                 <td>{t.description}</td>
                 <td>{t.categories?.name || 'brak'}</td>
