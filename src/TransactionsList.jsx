@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import EditTransaction from './EditTransaction';
-import { getUserName } from './helpers';
-
-// Mapa UID -> imię użytkownika
-const userMap = {
-  'd1248566-a2f7-4d93-8d38-b6d4aa40b2dc': 'Darek',
-  '7132e418-b66e-48b7-bb06-951080a4c6c0': 'Agnieszka',
-};
+import { getUserName, userMap } from './helpers';
 
 function TransactionsList() {
   const [transactions, setTransactions] = useState([]);
@@ -105,24 +99,30 @@ function TransactionsList() {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((t) => (
-              <tr
-                key={t.id}
-                onClick={() => setSelectedId(t.id)}
-                style={{
-                  backgroundColor: selectedId === t.id ? '#333' : '',
-                  color: t.transaction_type === 'income' ? 'green' : 'red',
-                  cursor: 'pointer',
-                }}
-              >
-                <td><input type="radio" checked={selectedId === t.id} onChange={() => setSelectedId(t.id)} /></td>
-                <td>{t.transaction_date}</td>
-                <td>{t.description}</td>
-                <td>{t.categories?.name || 'brak'}</td>
-                <td>{t.amount} zł</td>
-                <td>{t.user_id} → {userMap[t.user_id] || 'Nieznany'}</td>
-              </tr>
-            ))}
+            {transactions.map((t) => {
+              console.log('🧾 user_id:', t.user_id, '| getUserName:', getUserName(t.user_id));
+              return (
+                <tr
+                  key={t.id}
+                  onClick={() => setSelectedId(t.id)}
+                  style={{
+                    backgroundColor: selectedId === t.id ? '#333' : '',
+                    color: t.transaction_type === 'income' ? 'green' : 'red',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <td><input type="radio" checked={selectedId === t.id} onChange={() => setSelectedId(t.id)} /></td>
+                  <td>{t.transaction_date}</td>
+                  <td>{t.description}</td>
+                  <td>{t.categories?.name || 'brak'}</td>
+                  <td>{t.amount} zł</td>
+                  <td>
+                    <td>{getUserName(t.user_id)}</td>
+
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
