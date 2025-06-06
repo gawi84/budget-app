@@ -1,0 +1,41 @@
+/* 📊 Główne opakowanie dla sekcji statystyk */
+.stats-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 🔹 Górne podsumowania – saldo, wpływy, wydatki, oszczędności */
+.summary-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: #1e1e1e;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* 🔹 Pojedynczy element z podsumowania */
+.summary-item {
+  flex: 1 1 200px;
+  background: #2c2c2c;
+  padding: 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 1.1rem;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 🌞 Tryb jasny – inne kolory dla kontrastu */
+@media (prefers-color-scheme: light) {
+  .summary-boxes {
+    background: #f4f4f4;
+  }
+
+  .summary-item {
+    background: #ffffff;
+    color: #000000;
+  }
+}
