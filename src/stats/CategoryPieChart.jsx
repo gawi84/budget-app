@@ -1,30 +1,32 @@
-// src/stats/CategoryPieChart.jsx
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#a29bfe', '#fab1a0', '#81ecec', '#e17055'];
+const COLORS = [
+  '#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#a4de6c', '#d0ed57', '#d88884',
+];
 
 function CategoryPieChart({ data }) {
   if (!data || data.length === 0) return <p>Brak danych do wykresu.</p>;
 
   return (
-    <div style={{ width: '100%', height: 300 }}>
+    <div style={{ width: '100%', height: 400, paddingBottom: '2rem' }}> {/* 🔸 Zwiększona wysokość */}
       <ResponsiveContainer>
         <PieChart>
           <Pie
+            data={data}
             dataKey="value"
             nameKey="category"
-            data={data}
             cx="50%"
             cy="50%"
             outerRadius={100}
+            fill="#8884d8"
             label
           >
             {data.map((entry, index) => (
-              <Cell key={index} fill={COLORS[index % COLORS.length]} />
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
           <Tooltip />
-          <Legend />
+          <Legend verticalAlign="bottom" height={36} wrapperStyle={{ marginTop: '2rem' }} /> {/* 🔸 Odstęp */}
         </PieChart>
       </ResponsiveContainer>
     </div>
