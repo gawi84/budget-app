@@ -10,13 +10,9 @@ function Balance() {
   }, []);
 
   async function fetchData() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
     const { data, error } = await supabase
       .from('transactions')
-      .select('amount, transaction_type')
-      .eq('user_id', user.id);
+      .select('amount, transaction_type');
 
     if (error) {
       console.error('Błąd pobierania danych:', error);

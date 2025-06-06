@@ -27,34 +27,32 @@ async function fetchCategories(selectedType) {
 
 
   async function handleAdd(e) {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
-
-    const { error } = await supabase.from('transactions').insert([
-      {
-        user_id: user.id,
-        description,
-        amount: parseFloat(amount),
-        transaction_date: date,
-        transaction_type: type,
-        category_id: categoryId, // teraz UUID
-      }
-    ]);
-
-    setLoading(false);
-    if (!error) {
-      setDescription('');
-      setAmount('');
-      setDate('');
-      setCategoryId('');
-      setType('wydatek');
-      if (onAdded) onAdded();
-    } else {
-      alert('Błąd dodawania: ' + error.message);
+  const { error } = await supabase.from('transactions').insert([
+    {
+      description,
+      amount: parseFloat(amount),
+      transaction_date: date,
+      transaction_type: type,
+      category_id: categoryId,
     }
+  ]);
+
+  setLoading(false);
+  if (!error) {
+    setDescription('');
+    setAmount('');
+    setDate('');
+    setCategoryId('');
+    setType('expense');
+    if (onAdded) onAdded();
+  } else {
+    alert('Błąd dodawania: ' + error.message);
   }
+}
+
 
   return (
     <form onSubmit={handleAdd} className="form">

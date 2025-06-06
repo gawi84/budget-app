@@ -9,19 +9,18 @@ function TransactionsList() {
   }, []);
 
   async function fetchTransactions() {
-    const { data: { user } } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from('transactions')
-      .select(`
-        id, transaction_date, description, amount, transaction_type,
-        categories(name)
-      `)
-      .eq('user_id', user.id)
-      .order('transaction_date', { ascending: false });
+  const { data, error } = await supabase
+    .from('transactions')
+    .select(`
+      id, transaction_date, description, amount, transaction_type,
+      categories(name)
+    `)
+    .order('transaction_date', { ascending: false });
 
-    if (error) console.error("Błąd pobierania danych", error);
-    else setTransactions(data);
-  }
+  if (error) console.error("Błąd pobierania danych", error);
+  else setTransactions(data);
+}
+
 
   async function deleteTransaction(id) {
     const confirmDelete = window.confirm("Na pewno usunąć tę transakcję?");
