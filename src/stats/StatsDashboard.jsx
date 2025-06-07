@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getFilteredTransactions, getUserName } from '../helpers';
+import { getFilteredTransactions, getUserName, userMap } from '../helpers';
 import './StatsDashboard.css';
 import CategoryPieChart from './CategoryPieChart';
+import DailyBarChart from './DailyBarChart';
+
+
 
 function StatsDashboard() {
   const [transactions, setTransactions] = useState([]);
@@ -12,18 +15,28 @@ function StatsDashboard() {
   const [savingsSum, setSavingsSum] = useState(0);
   const [categoryData, setCategoryData] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const data = await getFilteredTransactions({});
-      setTransactions(data);
-      calculateSums(data);
-      preparePieData(data); // ⬅️ tutaj dodane!
-      setLoading(false);
-    }
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedUser, setSelectedUser] = useState('');
 
-    fetchData();
+  useEffect(() => {
+    handleFilter(); // Ładowanie domyślne
   }, []);
+
+  async function handleFilter() {
+    setLoading(true);
+    const data = await getFilteredTransactions({
+      fromDate,
+      toDate,
+      type: selectedType,
+      user: selectedUser
+    });
+    setTransactions(data);
+    calculateSums(data);
+    preparePieData(data);
+    setLoading(false);
+  }
 
   function calculateSums(data) {
     let income = 0;
@@ -34,7 +47,6 @@ function StatsDashboard() {
       if (t.transaction_type === 'income') income += t.amount;
       if (t.transaction_type === 'expense') expense += t.amount;
 
-      // Dodatkowo zliczamy wpłaty na oszczędności
       if (
         t.transaction_type === 'expense' &&
         t.categories?.name?.toLowerCase() === 'oszczędności'
@@ -66,6 +78,36 @@ function StatsDashboard() {
     <div className="stats-container">
       <h2>📊 Statystyki finansowe</h2>
 
+              <div className="filters-sticky">
+          <label>
+            Data od:
+            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+          </label>
+          <label>
+            Data do:
+            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+          </label>
+          <label>
+            Typ:
+            <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+              <option value="">Wszystkie</option>
+              <option value="income">Wpływ</option>
+              <option value="expense">Wydatek</option>
+            </select>
+          </label>
+          <label>
+            Użytkownik:
+            <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
+              <option value="">Wszyscy</option>
+              {Object.entries(userMap).map(([uid, name]) => (
+                <option key={uid} value={uid}>{name}</option>
+              ))}
+            </select>
+          </label>
+          <button onClick={handleFilter}>Filtruj</button>
+        </div>
+
+
       {loading ? (
         <p>⏳ Ładowanie danych...</p>
       ) : (
@@ -78,6 +120,9 @@ function StatsDashboard() {
           </div>
 
           <CategoryPieChart data={categoryData} />
+          <DailyBarChart data={transactions} />
+
+
         </>
       )}
     </div>
